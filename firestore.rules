@@ -1,26 +1,382 @@
-rules_version = '2';
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#050505">
+  <title>F0</title>
+  <style>
+    :root {
+      --bg: #050505;
+      --panel: rgba(26, 26, 30, 0.95);
+      --line: rgba(255,255,255,0.18);
+      --text: #f5f5f5;
+      --muted: #b7bcc8;
+      --danger: #e50914;
+      --blue: #1d5eea;
+      --green: #26c281;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    body {
+      padding: 24px 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .page {
+      width: min(560px, 100%);
+      padding: 0 20px;
+    }
+    .hidden { display: none !important; }
+    .brand-card {
+      margin-bottom: 20px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 18px 16px;
+      min-height: 110px;
+    }
+    .brand-card .logo {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+    .chat-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 280px;
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 56px;
+      height: 28px;
+      background: rgba(229, 9, 20, 0.1);
+      color: #ff5d68;
+      border: 1px solid rgba(229, 9, 20, 0.45);
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .chat-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    .message-panel {
+      margin-top: 14px;
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      min-height: 180px;
+      padding: 18px 16px;
+      color: rgba(255,255,255,0.8);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .status-text {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      color: #ff6470;
+      text-align: center;
+      min-height: 30px;
+    }
+    .chat-controls {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chat-controls input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 14px 16px;
+      font-size: 1rem;
+    }
+    .chat-controls button {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 14px 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .chat-controls .send-btn {
+      background: rgba(255,255,255,0.08);
+    }
+    .login-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+    }
+    .login-box input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.02);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+    .login-box button {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .login-status {
+      min-height: 22px;
+      margin-top: 10px;
+      color: #ff8a8a;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div id="loginScreen" class="login-box">
+      <div class="brand-card">
+        <img class="logo" src="https://firaspalestine4-pixel.github.io/F0/logo.png" alt="logo">
+      </div>
+      <input id="username" type="text" placeholder="اسم المستخدم" />
+      <input id="password" type="password" placeholder="كلمة المرور" />
+      <button id="loginBtn">تسجيل الدخول</button>
+      <div id="loginStatus" class="login-status"></div>
+    </div>
 
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow create, update: if request.auth != null;
-      allow delete: if request.auth != null;
+    <div id="chatScreen" class="hidden">
+      <div class="chat-box">
+        <div class="chat-header">
+          <span class="live-pill">LIVE</span>
+          <h1 class="chat-title">الدردشة</h1>
+        </div>
+
+        <div id="chatMessageBox" class="message-panel">
+          تحميل الدردشة...
+        </div>
+
+        <div id="chatStatus" class="status-text"></div>
+
+        <div class="chat-controls">
+          <input id="chatInput" type="text" maxlength="500" placeholder="اكتب رسالتك" />
+          <button id="sendBtn" class="send-btn">إرسال</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+      getFirestore,
+      collection,
+      doc,
+      getDoc,
+      addDoc,
+      deleteDoc,
+      getDocs,
+      query,
+      orderBy,
+      onSnapshot
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB2ExGl9s62nbpFxmk0FdpQVbHqWbV39Xc",
+      authDomain: "feras-f0.firebaseapp.com",
+      projectId: "feras-f0",
+      storageBucket: "feras-f0.firebasestorage.app",
+      messagingSenderId: "386083766886",
+      appId: "1:386083766886:web:4bbd17a19fa1b1ac8f32aa"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const loginScreen = document.getElementById('loginScreen');
+    const chatScreen = document.getElementById('chatScreen');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginStatus = document.getElementById('loginStatus');
+    const chatMessageBox = document.getElementById('chatMessageBox');
+    const chatStatus = document.getElementById('chatStatus');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    let currentProfile = null;
+    let unsubscribeChat = null;
+
+    function toEmail(username) {
+      return `${String(username).trim()}@f0.local`;
     }
 
-    match /chat/{messageId} {
-      allow read: if request.auth != null;
-
-      allow create: if request.auth != null
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.text is string
-        && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() <= 500;
-
-      allow update: if request.auth != null
-        && resource.data.uid == request.auth.uid;
-
-      allow delete: if request.auth != null;
+    function setLoginError(message) {
+      loginStatus.textContent = message;
     }
-  }
-}
+
+    function setChatMessage(message) {
+      chatStatus.textContent = message;
+    }
+
+    function showScreen(name) {
+      loginScreen.classList.toggle('hidden', name !== 'login');
+      chatScreen.classList.toggle('hidden', name !== 'chat');
+    }
+
+    async function getProfile(uid) {
+      const ref = doc(db, 'users', uid);
+      const snap = await getDoc(ref);
+      return snap.exists() ? snap.data() : null;
+    }
+
+    async function clearChatAutomatically() {
+      const snapshot = await getDocs(collection(db, 'chat'));
+      const deletes = snapshot.docs.map((docSnap) => deleteDoc(docSnap.ref));
+      await Promise.all(deletes);
+    }
+
+    function renderChat(messages) {
+      if (!messages.length) {
+        chatMessageBox.textContent = 'لا توجد رسائل في الدردشة';
+        return;
+      }
+
+      chatMessageBox.innerHTML = messages
+        .map((msg) => `<div style="margin-bottom: 10px; text-align: ${msg.uid === auth.currentUser?.uid ? 'left' : 'right'};">${msg.text}</div>`)
+        .join('');
+    }
+
+    function listenChat() {
+      if (unsubscribeChat) unsubscribeChat();
+
+      const q = query(collection(db, 'chat'), orderBy('createdAt', 'asc'));
+      unsubscribeChat = onSnapshot(q, (snapshot) => {
+        const messages = snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+        renderChat(messages);
+      }, (error) => {
+        console.error('Chat listener error:', error);
+      });
+    }
+
+    loginBtn.addEventListener('click', async () => {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (!username || !password) {
+        setLoginError('أدخل اسم المستخدم وكلمة المرور');
+        return;
+      }
+
+      try {
+        setLoginError('جاري تسجيل الدخول...');
+        const cred = await signInWithEmailAndPassword(auth, toEmail(username), password);
+        const profile = await getProfile(cred.user.uid);
+
+        if (!profile) {
+          await signOut(auth);
+          throw new Error('الحساب غير مفعّل');
+        }
+
+        currentProfile = profile;
+        await clearChatAutomatically();
+        showScreen('chat');
+        listenChat();
+        setLoginError('');
+      } catch (error) {
+        setLoginError(error.message || 'فشل تسجيل الدخول');
+      }
+    });
+
+    sendBtn.addEventListener('click', async () => {
+      const text = chatInput.value.trim();
+      if (!text || !auth.currentUser) return;
+
+      try {
+        await addDoc(collection(db, 'chat'), {
+          uid: auth.currentUser.uid,
+          text,
+          createdAt: Date.now()
+        });
+        chatInput.value = '';
+      } catch (error) {
+        console.error('Send chat error:', error);
+      }
+    });
+
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendBtn.click();
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        currentProfile = null;
+        showScreen('login');
+        return;
+      }
+
+      try {
+        currentProfile = await getProfile(user.uid);
+        if (!currentProfile) {
+          await signOut(auth);
+          return;
+        }
+
+        await clearChatAutomatically();
+        showScreen('chat');
+        listenChat();
+      } catch (error) {
+        console.error('Auth state error:', error);
+      }
+    });
+  </script>
+</body>
+</html>
