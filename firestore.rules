@@ -8,6 +8,7 @@ service cloud.firestore {
       allow delete: if request.auth != null;
     }
 
+    // Chat is available only to signed-in users.
     match /chat/{messageId} {
       allow read: if request.auth != null;
       allow create: if request.auth != null
